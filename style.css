@@ -487,6 +487,38 @@ th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--li
 th { background: var(--peach); color: var(--ink); font-weight: 700; }
 tr:nth-child(even) td { background: #fffaf5; }
 
+/* ---------- 必要黄金数テーブル ---------- */
+.gold-table { min-width: 520px; text-align: center; }
+.gold-table th { text-align: center; }
+.gold-table td { text-align: center; }
+.gold-table td.name {
+  text-align: left;
+  font-weight: 700;
+  background: var(--card-bg);
+  white-space: nowrap;
+}
+.gold-table td.name .sub {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.gold-table td.lbl {
+  text-align: left;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.gold-table tr.step td.val { background: #ecf9f3; }  /* ソフトミント：1段階 */
+.gold-table tr.x5  td.val { background: #fdf0f5; }  /* ソフトピンク：×5 */
+.gold-table tfoot td {
+  font-weight: 700;
+  background: #fff5d6;
+  color: var(--ink);
+}
+.gold-table tfoot td.name { background: #fff5d6; }
+.gold-table tfoot td.lbl  { color: var(--ink); }
+
 /* ---------- フッター ---------- */
 .site-footer {
   text-align: center;
