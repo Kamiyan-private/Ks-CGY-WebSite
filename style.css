@@ -245,6 +245,14 @@ main {
   border-radius: var(--radius-sm);
 }
 
+/* ---------- 控えめな注意書き ---------- */
+.mini-note {
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
 /* ---------- かんたんガイド（簡略版パネル） ---------- */
 .quick {
   background: linear-gradient(135deg, #eafaf3, #f3ecff 60%, #ffeef5);
