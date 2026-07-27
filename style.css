@@ -650,6 +650,48 @@ tr:nth-child(even) td { background: #fffaf5; }
   100% { left: 130%; }
 }
 
+/* ---------- 英雄の役割・使い方 ---------- */
+.hero-role {
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+
+.hero-role-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+
+.hero-role-head img {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1.5px solid rgba(120, 90, 30, 0.28);
+  flex: none;
+}
+
+.hero-role-head h3 { margin: 0; font-size: 1.15rem; }
+.hero-role-head .sub { font-size: 0.85rem; color: var(--ink-soft); font-weight: 400; }
+
+.role-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.role-tag {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--peach);
+  border-radius: 999px;
+  padding: 2px 12px;
+}
+
+.skill-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
 /* ---------- フッター ---------- */
 .site-footer {
   text-align: center;
