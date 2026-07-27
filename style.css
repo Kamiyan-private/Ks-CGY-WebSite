@@ -519,6 +519,137 @@ tr:nth-child(even) td { background: #fffaf5; }
 .gold-table tfoot td.name { background: #fff5d6; }
 .gold-table tfoot td.lbl  { color: var(--ink); }
 
+/* ---------- 世代別 育成優先度（ティア表示） ---------- */
+.tier-list { display: flex; flex-direction: column; gap: 12px; margin: 14px 0 4px; }
+
+.tier {
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.tier-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+
+.tier-gen {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--peach);
+  border-radius: 999px;
+  padding: 3px 16px;
+}
+
+.tier-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--peach-deep);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+/* 入手方法（ラベルと英雄を横並びでコンパクトに） */
+.src-list { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 4px; }
+.src-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.src-label {
+  flex: none;
+  width: 168px;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.35;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--peach);
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+.tier-heroes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; }
+
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 6px 14px;
+}
+
+/* キャラ画像（四角） */
+.mk {
+  width: 2em;
+  height: 2em;
+  margin-right: 0.5em;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1.5px solid rgba(120, 90, 30, 0.28);
+  background: var(--cream);
+  flex: none;
+  vertical-align: middle;
+}
+
+.hero-chip.rank1 {
+  font-size: 1.3rem;
+  border-color: var(--mint-deep);
+  background: var(--mint);
+  box-shadow: var(--shadow-sm);
+}
+
+.arw { font-size: 1.25rem; font-weight: 800; color: var(--peach-deep); }
+
+/* 3世代を強調 */
+.tier-top {
+  border-color: var(--peach-deep);
+  background: linear-gradient(135deg, #fff4ec, #ffe6ef);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 課金枠：アマデウスをゴージャスに */
+.tier-tag.paid-tag { background: #e3a51c; }
+
+.hero-chip.amadeus {
+  position: relative;
+  overflow: hidden;
+  font-size: 1.4rem;
+  color: #7a5410;
+  background: linear-gradient(135deg, #fff3c4, #ffdf7e 40%, #f6b73c);
+  border: 2px solid #e3a51c;
+  box-shadow: 0 4px 16px rgba(226, 165, 28, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.hero-chip.amadeus::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  transform: skewX(-20deg);
+  animation: shine 3.2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%   { left: -60%; }
+  55%  { left: 130%; }
+  100% { left: 130%; }
+}
+
 /* ---------- フッター ---------- */
 .site-footer {
   text-align: center;
