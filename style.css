@@ -650,6 +650,42 @@ tr:nth-child(even) td { background: #fffaf5; }
   100% { left: 130%; }
 }
 
+/* ---------- 同盟からのお知らせ ---------- */
+.news-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.news-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--line);
+}
+.news-list li:last-child { border-bottom: none; }
+.news-date {
+  flex: none;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #fff;
+  background: var(--peach-deep);
+  border-radius: 999px;
+  padding: 2px 12px;
+}
+
+/* ---------- CGY同盟について ---------- */
+.about-catch {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--lav-deep);
+  margin: 6px 0 12px;
+}
+.about-en {
+  text-align: center;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-top: 12px;
+}
+
 /* ---------- 英雄の役割・使い方 ---------- */
 .hero-role {
   background: var(--cream);
