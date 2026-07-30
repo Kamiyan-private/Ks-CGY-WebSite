@@ -686,6 +686,34 @@ tr:nth-child(even) td { background: #fffaf5; }
   margin-top: 12px;
 }
 
+/* ---------- 集結主の編成例 ---------- */
+.comp-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 16px; }
+.comp-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.comp-label {
+  flex: none;
+  width: 92px;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--peach);
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+.comp-row .hero-chip { font-size: 0.98rem; padding: 5px 12px; }
+.comp-row .mk { width: 1.8em; height: 1.8em; }
+
 /* ---------- 英雄の役割・使い方 ---------- */
 .hero-role {
   background: var(--cream);
