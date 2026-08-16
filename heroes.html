@@ -21,16 +21,20 @@
     <a href="basics.html">基本的な情報</a>
     <a href="events.html">イベント情報</a>
     <a href="heroes.html" class="active">英雄育成</a>
+    <a href="battle.html">戦闘・編成</a>
   </nav>
 
   <main>
     <section class="hero">
       <h1>🦊 英雄育成について</h1>
-      <p>世代ごとの育成優先度と、各英雄の役割・使い方をまとめます。</p>
+      <p>世代ごとの育成優先度と、各英雄の役割・使い方をまとめます。<br>
+         各項目は見出しをタップで開閉できます。🐾</p>
     </section>
 
-    <section class="card">
-      <h2>⭐ 世代別 育成優先度</h2>
+    <section class="cat">
+      <details class="acc" open>
+        <summary>⭐ 世代別 育成優先度</summary>
+        <div class="acc-body">
       <p>育成おすすめ順です。<strong>左の英雄ほど優先度が高い</strong>ので、まずは各世代の一番左から育てよう！</p>
       <div class="tier-list">
         <div class="tier tier-top">
@@ -87,10 +91,12 @@
         <strong>アマデウス</strong>は、5世代英雄が登場してくるまでは現役の<strong>最強歩兵英雄</strong>！<br>
         攻撃編成・防衛編成・競技場、すべてでこいつが最強です。💪
       </div>
-    </section>
+        </div>
+      </details>
 
-    <section class="card">
-      <h2>🎁 最新世代英雄の入手方法</h2>
+      <details class="acc">
+        <summary>🎁 最新世代英雄の入手方法</summary>
+        <div class="acc-body">
       <div class="src-list">
         <div class="src-row">
           <span class="src-label">英雄殿堂</span>
@@ -106,10 +112,12 @@
         </div>
       </div>
       <p class="mini-note">※ 過去世代の英雄も、各入手方法でそれぞれ手に入る場合があります。</p>
-    </section>
+        </div>
+      </details>
 
-    <section class="card">
-      <h2>🦸 各英雄の役割・使い方</h2>
+      <details class="acc">
+        <summary>🦸 各英雄の役割・使い方</summary>
+        <div class="acc-body">
       <p class="cat-lead">各英雄の「📖 スキル詳細」で説明画像を確認できます。</p>
 
       <div class="hero-role">
@@ -184,6 +192,161 @@
           </div>
         </details>
       </div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>⚒️ 英雄装備の育て方</summary>
+        <div class="acc-body">
+          <h3>🎁 装備自体の入手方法</h3>
+          <div class="way-list">
+            <div class="way">
+              <span class="way-name">競技ショップ</span>
+              <span class="way-desc">
+                <strong>セレクト宝箱</strong>を <span class="key">12,000pt</span> で交換。
+                週1度、確定で<strong>好きな部位</strong>が選べます。<span class="tag must">必ず交換！</span>
+              </span>
+            </div>
+            <div class="way">
+              <span class="way-name">英雄装備<br>ラッキー宝箱</span>
+              <span class="way-desc">ランダムですが、たまーーにゲットできます！</span>
+            </div>
+          </div>
+
+          <h3>🔧 強化要素は2つ</h3>
+          <div class="up-grid">
+            <div class="up-card">
+              <span class="lv">【Lv】</span>
+              <span class="arrow-down">▼ 必要なもの</span>
+              <span class="need">⚒️ ハンマー</span>
+            </div>
+            <div class="up-card plus">
+              <span class="lv">【＋】</span>
+              <span class="arrow-down">▼ 必要なもの</span>
+              <span class="need">📊 装備経験値</span>
+            </div>
+          </div>
+
+          <h3>⚒️ ハンマーの入手方法</h3>
+          <div class="way-list">
+            <div class="way">
+              <span class="way-name">巨熊狩猟</span>
+              <span class="way-desc">
+                2日に1度の開催。忘れず回収しましょう！<span class="tag main">メインルート</span>
+              </span>
+            </div>
+            <div class="way">
+              <span class="way-name">各種ショップ</span>
+              <span class="way-desc">
+                ポイントが余ってきたら交換しましょう！<span class="tag low">優先度 低め</span>
+              </span>
+            </div>
+            <div class="way">
+              <span class="way-name">その他イベント</span>
+              <span class="way-desc">同盟総動員のほか、いろんなイベントの報酬になっています！</span>
+            </div>
+          </div>
+
+          <h3>📊 装備経験値の入手方法</h3>
+          <div class="way-list">
+            <div class="way">
+              <span class="way-name">移籍争奪</span>
+              <span class="way-desc">報酬に「<strong>経験値パーツ（瓦）</strong>」があります。</span>
+            </div>
+            <div class="way">
+              <span class="way-name">試練挑戦ショップ</span>
+              <span class="way-desc">瓦のほか、<strong>ラッキー宝箱</strong>が交換できます。</span>
+            </div>
+            <div class="way">
+              <span class="way-name">VIPショップ</span>
+              <span class="way-desc"><strong>VIP8</strong> から「瓦」が購入可能になります。</span>
+            </div>
+            <div class="way">
+              <span class="way-name">紫以下の装備</span>
+              <span class="way-desc">余っている紫以下の装備を、そのまま経験値にできます。</span>
+            </div>
+          </div>
+
+          <div class="note">
+            ※ <strong>神話装備（赤装備）</strong>には、別途 <strong>ミスリル</strong> が必要です。
+          </div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>🎯 英雄装備の強化目標</summary>
+        <div class="acc-body">
+          <p>強化目標を<strong>ステップ式</strong>で記載していきます。上から順にクリアしていこう！</p>
+
+          <div class="step-list">
+            <div class="step">
+              <span class="step-no">1</span>
+              <div class="step-body">
+                <div class="step-head">
+                  <span class="step-goal">金 12部位</span>
+                  <h4>英雄3人分の金装備をGET</h4>
+                </div>
+                <div class="step-desc">
+                  <p>1部隊分の金装備を用意しましょう。<strong>3名 × 4部位 ＝ 12種類</strong> 必要です。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-no">2</span>
+              <div class="step-body">
+                <div class="step-head">
+                  <span class="step-goal">赤 3部位</span>
+                  <h4>英雄3人分の1部位を赤装備</h4>
+                </div>
+                <div class="step-desc">
+                  <p>歩兵・騎兵・弓兵、それぞれ<strong>1部位の赤装備化</strong>を目指しましょう。</p>
+                  <p class="mini-note">※ 兵種ごとの育成優先は下記の通りです。（内容は準備中）</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-no">3</span>
+              <div class="step-body">
+                <div class="step-head">
+                  <span class="step-goal">赤 12部位</span>
+                  <h4>英雄3人分を赤装備</h4>
+                </div>
+                <div class="step-desc">
+                  <p>各兵種ごと、<strong>12部位</strong>を赤装備に強化しましょう。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-no">4</span>
+              <div class="step-body">
+                <div class="step-head">
+                  <span class="step-goal">赤 20部位</span>
+                  <h4>英雄5人分を赤装備</h4>
+                </div>
+                <div class="step-desc">
+                  <p><strong>競技場用</strong>の英雄の分も含めて、<strong>20部位</strong>を赤装備に強化しましょう。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step goal">
+              <span class="step-no">5</span>
+              <div class="step-body">
+                <div class="step-head">
+                  <span class="step-goal">∞</span>
+                  <h4>以後、強化し続ける</h4>
+                </div>
+                <div class="step-desc">
+                  <p>完成した <strong>20部位</strong> を育成し続けます。💪</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
     </section>
   </main>
 

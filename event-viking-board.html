@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>駐屯フェーズ コピーボード｜バイキングの略奪｜CGY 攻略Wiki</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="logo">🐾</span>
+      <span><span class="cgy">CGY</span> 攻略Wiki</span>
+    </a>
+    <p class="tagline">CritterGangYard 同盟メンバー専用 ／ キングショット攻略まとめ</p>
+  </header>
+
+  <nav class="nav">
+    <a href="index.html">ホーム</a>
+    <a href="basics.html">基本的な情報</a>
+    <a href="events.html" class="active">イベント情報</a>
+    <a href="heroes.html">英雄育成</a>
+    <a href="battle.html">戦闘・編成</a>
+  </nav>
+
+  <main>
+    <p class="crumb"><a href="event-viking.html">← バイキングの略奪へ</a></p>
+
+    <section class="hero">
+      <h1>📋 駐屯フェーズ コピーボード</h1>
+      <p>バイキングの略奪で、同盟チャットに流す通知文をワンタップでコピーできます。</p>
+    </section>
+
+    <section class="card">
+      <h2>📣 通知メッセージ</h2>
+      <p class="cat-lead">「コピー」を押すと、その1行だけをコピーします。押した行はチェック済み（薄く表示）になります。</p>
+
+      <div id="board"></div>
+
+      <div class="cb-footbar">
+        <span class="cb-status" id="status">各行の「コピー」で1行だけコピーします</span>
+        <button class="cb-reset" id="reset" type="button">チェックをリセット</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="paws">🐾 🐾 🐾</p>
+    <p>CGY - CritterGangYard 同盟メンバー専用サイト<br>
+       ※このサイトは限定公開です。URLの共有はメンバー内のみでお願いします。</p>
+  </footer>
+
+<script>
+  // hq: true のブロックは「本部駐屯」として強調表示
+  const blocks = [
+    {
+      rows: [
+        { p: "P6",  t: "フェーズ6着弾：オフライン駐屯部隊をオンラインメンバーへ駐屯してください。" },
+        { p: "P7",  t: "フェーズ7着弾：再度戻してオフラインメンバーへ駐屯してください。" },
+      ]
+    },
+    {
+      hq: true,
+      rows: [
+        { p: "P9",  t: "フェーズ9着弾：平原本部へ駐屯してください。" },
+        { p: "P10", t: "フェーズ10着弾：本部から送還し再度メンバーへ駐屯してください。" },
+      ]
+    },
+    {
+      rows: [
+        { p: "P13", t: "フェーズ13着弾：オフライン駐屯部隊をオンラインメンバーへ駐屯してください。" },
+        { p: "P14", t: "フェーズ14着弾：再度戻してオフラインメンバーへ駐屯してください。" },
+      ]
+    },
+    {
+      rows: [
+        { p: "P16", t: "フェーズ16着弾：オフライン駐屯部隊をオンラインメンバーへ駐屯してください。" },
+        { p: "P17", t: "フェーズ17着弾：再度戻してオフラインメンバーへ駐屯してください。" },
+      ]
+    },
+    {
+      hq: true,
+      rows: [
+        { p: "P19", t: "フェーズ19着弾：平原本部へ駐屯してください。" },
+        { p: "P20", t: "フェーズ20着弾：お疲れ様でした！！" },
+      ]
+    },
+  ];
+
+  const board = document.getElementById("board");
+  const status = document.getElementById("status");
+
+  blocks.forEach((block, bi) => {
+    const wrap = document.createElement("div");
+    wrap.className = "cb-block" + (block.hq ? " hq" : "");
+
+    const label = document.createElement("p");
+    label.className = "cb-label";
+    if (block.hq) {
+      label.innerHTML = '<span class="flag">🏰</span> 本部駐屯';
+    } else {
+      label.textContent = "ブロック " + (bi + 1);
+    }
+    wrap.appendChild(label);
+
+    block.rows.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "cb-row" + (block.hq ? " hq" : "");
+
+      const phase = document.createElement("span");
+      phase.className = "cb-phase";
+      phase.textContent = item.p;
+
+      const text = document.createElement("span");
+      text.className = "cb-text";
+      text.textContent = item.t;
+      text.title = item.t;
+
+      const btn = document.createElement("button");
+      btn.className = "cb-copy";
+      btn.type = "button";
+      btn.textContent = "コピー";
+      btn.addEventListener("click", () => copyLine(item.t, btn, row));
+
+      row.appendChild(phase);
+      row.appendChild(text);
+      row.appendChild(btn);
+      wrap.appendChild(row);
+    });
+
+    board.appendChild(wrap);
+  });
+
+  async function copyLine(txt, btn, row) {
+    const ok = await writeClipboard(txt);
+    if (!ok) {
+      status.textContent = "コピーに失敗しました。行を長押しして手動でコピーしてください。";
+      return;
+    }
+    row.classList.add("done");
+    const original = btn.textContent;
+    btn.textContent = "済";
+    btn.classList.add("copied");
+    status.textContent = "コピーしました： " + txt.slice(0, 18) + "…";
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove("copied");
+    }, 1200);
+  }
+
+  async function writeClipboard(txt) {
+    try {
+      await navigator.clipboard.writeText(txt);
+      return true;
+    } catch (e) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = txt;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      } catch (e2) {
+        return false;
+      }
+    }
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    document.querySelectorAll(".cb-row.done").forEach(r => r.classList.remove("done"));
+    status.textContent = "チェックをリセットしました";
+  });
+</script>
+</body>
+</html>

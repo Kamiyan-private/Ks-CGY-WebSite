@@ -756,6 +756,275 @@ tr:nth-child(even) td { background: #fffaf5; }
   border: 1px solid var(--line);
 }
 
+/* ---------- 入手方法リスト（装備の育て方など） ---------- */
+.way-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 18px; }
+
+.way {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+
+.way-name {
+  flex: none;
+  width: 150px;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--peach);
+  border-radius: 10px;
+  padding: 5px 8px;
+}
+
+.way-desc { flex: 1 1 240px; font-size: 0.88rem; line-height: 1.7; }
+
+/* 優先度タグ */
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.tag.must { background: var(--pink-deep); color: #fff; }
+.tag.low  { background: var(--line); color: var(--ink-soft); }
+.tag.main { background: var(--mint-deep); color: #fff; }
+
+/* 強化要素の2枚カード */
+.up-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin: 10px 0 18px;
+}
+
+.up-card {
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+}
+
+.up-card .lv {
+  display: inline-block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--mint);
+  border-radius: 10px;
+  padding: 4px 18px;
+}
+.up-card.plus .lv { background: var(--lavender); }
+
+.up-card .arrow-down { display: block; font-size: 1.1rem; color: var(--ink-soft); margin: 6px 0 4px; }
+
+.up-card .need {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--sun);
+  border-radius: 999px;
+  padding: 4px 16px;
+}
+
+/* ---------- ステップ式の目標リスト ---------- */
+.step-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0 4px; }
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.step-no {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--peach-deep);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.step-body { flex: 1 1 auto; }
+
+.step-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 4px; }
+.step-head h4 { margin: 0; font-size: 1rem; }
+
+.step-goal {
+  flex: none;
+  width: 92px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--sun);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+/* 説明文をタイトルの位置に揃える（バッジ幅 + gap 分だけ下げる） */
+.step-desc { padding-left: 102px; }
+.step-body p { margin: 0; font-size: 0.88rem; line-height: 1.7; }
+
+@media (max-width: 600px) {
+  .step-desc { padding-left: 0; }
+}
+
+/* 最終ステップはゴールドで */
+.step.goal {
+  background: #fff8e8;
+  border-color: #f0d5a6;
+}
+.step.goal .step-no { background: #e3a51c; }
+
+/* ---------- コピーボード（駐屯フェーズ） ---------- */
+.cb-block { margin-bottom: 22px; }
+
+.cb-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.cb-block.hq .cb-label { color: #b56f12; font-size: 0.95rem; letter-spacing: 0.02em; }
+
+.cb-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 9px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.cb-row:hover { border-color: var(--peach); }
+.cb-row.done { opacity: 0.5; }
+.cb-row.done .cb-text { text-decoration: line-through; }
+
+/* 本部駐屯の行を強調 */
+.cb-row.hq {
+  background: #fff8e8;
+  border-color: #f0d5a6;
+  border-left: 6px solid #e3a51c;
+}
+
+.cb-phase {
+  flex: 0 0 auto;
+  align-self: center;
+  min-width: 46px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: var(--mint);
+  border-radius: 8px;
+  padding: 5px 8px;
+}
+.cb-row.hq .cb-phase { background: #ffe0ad; color: #8a5a10; }
+
+.cb-text { flex: 1 1 auto; align-self: center; font-size: 0.9rem; line-height: 1.6; }
+.cb-row.hq .cb-text { font-weight: 700; color: #8a5a10; }
+
+.cb-copy {
+  flex: 0 0 auto;
+  align-self: stretch;
+  min-width: 78px;
+  border: none;
+  border-radius: 10px;
+  background: var(--peach-deep);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 158, 125, 0.35);
+  transition: background 0.12s, transform 0.05s;
+}
+.cb-copy:hover { background: #f9895f; }
+.cb-copy:active { transform: translateY(1px); }
+.cb-row.hq .cb-copy { background: #e3a51c; box-shadow: 0 2px 8px rgba(227, 165, 28, 0.35); }
+.cb-row.hq .cb-copy:hover { background: #c98f13; }
+.cb-copy.copied { background: var(--mint-deep) !important; box-shadow: 0 2px 8px rgba(79, 201, 160, 0.4); }
+
+.cb-footbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px dashed var(--line);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.cb-status { flex: 1 1 auto; }
+.cb-reset {
+  flex: 0 0 auto;
+  background: #fff;
+  border: 2px solid var(--line);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+.cb-reset:hover { color: var(--peach-deep); border-color: var(--peach); }
+
+/* ツールへの導線ボタン */
+.tool-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--peach-deep);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+.tool-link:hover { background: #f9895f; }
+
+@media (max-width: 500px) {
+  .cb-row { flex-wrap: wrap; }
+  .cb-text { flex-basis: 100%; order: 3; margin-top: 8px; }
+  .cb-copy { min-width: 70px; padding: 8px 12px; }
+}
+
 /* ---------- フッター ---------- */
 .site-footer {
   text-align: center;
