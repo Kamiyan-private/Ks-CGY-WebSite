@@ -843,7 +843,7 @@ tr:nth-child(even) td { background: #fffaf5; }
 /* ---------- ステップ式の目標リスト ---------- */
 .step-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0 4px; }
 
-.step {
+.step-list .step {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -894,11 +894,11 @@ tr:nth-child(even) td { background: #fffaf5; }
 }
 
 /* 最終ステップはゴールドで */
-.step.goal {
+.step-list .step.goal {
   background: #fff8e8;
   border-color: #f0d5a6;
 }
-.step.goal .step-no { background: #e3a51c; }
+.step-list .step.goal .step-no { background: #e3a51c; }
 
 /* ---------- コピーボード（駐屯フェーズ） ---------- */
 .cb-block { margin-bottom: 22px; }
