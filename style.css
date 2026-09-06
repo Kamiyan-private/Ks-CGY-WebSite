@@ -903,16 +903,14 @@ tr:nth-child(even) td { background: #fffaf5; }
 /* ---------- 敵鯖ランキング表 ---------- */
 .rank-table { min-width: 380px; }
 .rank-table th { text-align: center; }
-.rank-table td { vertical-align: middle; }
+.rank-table td { vertical-align: middle; text-align: center; }
 
 .rank-table td.rk {
   width: 52px;
-  text-align: center;
   font-weight: 800;
   white-space: nowrap;
 }
 .rank-table td.num {
-  text-align: right;
   font-weight: 800;
   white-space: nowrap;
 }
