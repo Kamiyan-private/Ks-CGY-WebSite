@@ -975,7 +975,7 @@ tr:nth-child(even) td { background: #fffaf5; }
 .gal-item img {
   display: block;
   width: 100%;
-  height: 122px;
+  height: 170px;
   object-fit: cover;
   background: var(--cream);
 }
@@ -1043,7 +1043,7 @@ tr:nth-child(even) td { background: #fffaf5; }
 
 @media (max-width: 600px) {
   .gal-grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
-  .gal-item img { height: 100px; }
+  .gal-item img { height: 140px; }
 }
 
 /* ---------- コピーボード（駐屯フェーズ） ---------- */
