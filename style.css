@@ -913,6 +913,93 @@ tr:nth-child(even) td { background: #fffaf5; }
   vertical-align: middle;
 }
 
+/* ---------- サーバー比較表（敵 vs 自軍） ---------- */
+.vs-table { min-width: 420px; }
+
+.vs-table thead th {
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  padding: 10px 8px;
+}
+.vs-table thead th .sub {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.vs-table thead th.enemy { background: var(--pink); }
+.vs-table thead th.ours  { background: var(--mint); }
+
+.vs-table tbody th {
+  text-align: left;
+  white-space: nowrap;
+  font-size: 0.84rem;
+  font-weight: 700;
+  background: var(--cream);
+  color: var(--ink-soft);
+}
+
+.vs-table tbody td {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  width: 34%;
+}
+.vs-table tbody td .sub {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+/* 優勢な側をハイライト */
+.vs-table tbody td.win {
+  background: var(--sun);
+  position: relative;
+}
+.vs-table tbody td.win::after {
+  content: "▲";
+  font-size: 0.6rem;
+  color: var(--peach-deep);
+  margin-left: 5px;
+  vertical-align: 2px;
+}
+
+/* ---------- サーバー概要グリッド ---------- */
+.kstat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin: 12px 0 4px;
+}
+
+.kstat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+
+.kstat-label { font-size: 0.82rem; color: var(--ink-soft); white-space: nowrap; }
+.kstat-value { font-size: 1rem; font-weight: 800; color: var(--ink); text-align: right; }
+
+/* サーバーIDのバッジ */
+.hero h1 .kid {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--peach);
+  color: var(--ink);
+  font-size: 0.7em;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
 /* ---------- 敵鯖ランキング表 ---------- */
 .rank-table { min-width: 380px; }
 .rank-table th { text-align: center; }
@@ -928,6 +1015,11 @@ tr:nth-child(even) td { background: #fffaf5; }
   white-space: nowrap;
 }
 .rank-table td.who { white-space: nowrap; }
+
+/* 名前の列は左寄せ（長さがバラバラでも頭が揃うように） */
+.rank-table td.name-cell,
+.rank-table th.name-cell { text-align: left; }
+.rank-table td.name-cell .mk { vertical-align: middle; }
 
 /* 同盟タグ */
 .al-tag {
