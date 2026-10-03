@@ -11,6 +11,9 @@
 #  ・初回実行時のデータを「初期版」として data/kingdom-<kid>-baseline.json に保存し、
 #    2回目以降は初期版を据え置いたまま最新版だけ更新します
 #  ・初期版を取り直したいときは --reset-baseline を付けて実行してください
+#  ・競技場TOP10の英雄・装備もページに出します。既存ページの競技場欄だけ更新したいときは
+#    --arena-only を付けると、<!-- arena:start --> 〜 <!-- arena:end --> の間だけ差し替えます
+#     例: perl tools/build-kingdom.pl 1909 event-kingdom-1909.html --arena-only
 #
 #  APIキーは ~/.mightpulse_key から読み込みます（リポジトリには入れない）
 # =====================================================================
@@ -25,8 +28,9 @@ use File::Path qw(make_path);
 binmode(STDOUT, ':encoding(UTF-8)');
 
 my @args = @ARGV;
-my $reset = grep { $_ eq '--reset-baseline' } @args;
-@args = grep { $_ ne '--reset-baseline' } @args;
+my $reset      = grep { $_ eq '--reset-baseline' } @args;
+my $arena_only = grep { $_ eq '--arena-only' } @args;
+@args = grep { $_ ne '--reset-baseline' && $_ ne '--arena-only' } @args;
 
 my $kid  = shift @args or die "kid を指定してください（例: 1909）\n";
 my $out  = shift @args or die "出力ファイルを指定してください\n";
@@ -42,6 +46,7 @@ my $key = <$kf>; close $kf; $key =~ s/\s+$//;
 my %HERO_JA = (
     'Amadeus' => 'アマデウス',  'Zoe'     => 'ゾーイ',    'Eric'    => 'エリック',
     'Perla'   => 'ペーラ',      'Marin'   => 'マリン',    'Jaeger'  => 'イェーガー',
+    'Petra'   => 'ペーラ',      'Marlin'  => 'マリン',    # APIの実際の表記
     'Hilde'   => 'ヒルデ',      'Jabel'   => 'ジェベル',  'Saro'    => 'サロ',
     'Helga'   => 'ヘルガ',      'Howard'  => 'ハワード',  'Chenko'  => 'チェンコ',
 );
@@ -180,6 +185,118 @@ $pad</details>
 HTML
 }
 
+# ---------- 競技場（英雄装備） ----------
+my %SLOT_JA  = (Helmet => '兜', Gloves => '手袋', Armor => '鎧', Boots => '靴');
+my %TROOP    = (1 => ['infantry', '歩兵'], 2 => ['cavalry', '騎兵'], 3 => ['archer', '弓兵']);
+
+# 競技場ランキングTOP10と、各プレイヤーの英雄5体を取得
+sub fetch_arena {
+    print "競技場ランキングを取得中...\n";
+    my $board = api("/kingdoms/$kid/ranks?board=coliseum&limit=10")->{boards}[0];
+    my @players;
+    for my $r (@{ $board->{rows} || [] }) {
+        print "  英雄情報を取得中: $r->{nick_name}...\n";
+        my $p = eval { api("/players/$r->{governor_id}?include=heroes") };
+        my $h = $p ? $p->{heroes} : undef;
+        push @players, {
+            row    => $r,
+            heroes => (ref $h eq 'ARRAY') ? $h : undef,
+            note   => !$p ? '取得できませんでした' : (ref $h eq 'HASH' && $h->{hidden}) ? '英雄情報は非公開です' : '',
+        };
+    }
+    return \@players;
+}
+
+# 装備1部位のバッジ。赤装備は100を超えた分を「+」で出す（ゲーム内の表示と同じ）
+sub gear_badge {
+    my ($g) = @_;
+    my $enh  = $g->{enhancement_level} // 0;
+    my $rf   = $g->{refine_level} // 0;
+    my $plus = $g->{red} ? $enh - 100 : $enh;
+    $plus = 0 if $plus < 0;
+    my $cls  = $g->{red} ? 'g-red' : 'g-gold';
+    my $slot = $SLOT_JA{ $g->{slot} // '' } // esc($g->{slot});
+    my $tip  = esc("$slot：" . ($g->{red} ? '赤装備' : '神話装備') . " 強化$enh／精錬Lv$rf");
+    return qq{<span class="ag $cls" title="$tip"><span class="ag-slot">$slot</span><b>+$plus</b><span class="ag-lv">Lv$rf</span></span>};
+}
+
+# 英雄1体のカード
+sub hero_card {
+    my ($h) = @_;
+    my $ja   = $HERO_JA{ $h->{name} // '' } // $h->{name} // '?';
+    my $face = (-f "image/$ja.webp") ? "image/$ja.webp" : abs_url($h->{icon});
+    my $gear = $h->{gear} || [];
+    my $tr   = @$gear ? $TROOP{ $gear->[0]{troop} // 0 } : undef;
+    my $troop = $tr ? qq{<img class="ah-troop" src="$FLAG_BASE/static/troop-types/$tr->[0].webp" alt="$tr->[1]" title="$tr->[1]" onerror="this.remove()">} : '';
+    my $n     = $h->{stars} // 0;
+    my $stars = $n <= 5 ? ('★' x $n) . ('☆' x (5 - $n)) : esc($h->{star_label});
+    my $skill = join('', map { '<b>' . ($_->{level} // '—') . '</b>' } @{ $h->{skill_levels} || [] }) || '—';
+    my $ex    = defined $h->{exclusive_gear_level}
+        ? qq{<span class="ag g-ex" title="専用装備 Lv$h->{exclusive_gear_level}"><span class="ag-slot">専用</span><b>+$h->{exclusive_gear_level}</b></span>}
+        : qq{<span class="ag g-none"><span class="ag-slot">専用</span><b>—</b></span>};
+    my $badges = join('', $ex, map { gear_badge($_) } sort { ($a->{sid} // 0) <=> ($b->{sid} // 0) } @$gear);
+    return <<"HTML";
+            <div class="ah">
+              <div class="ah-face"><img src="@{[esc $face]}" alt="@{[esc $ja]}" loading="lazy" onerror="this.remove()">$troop<span class="ah-lv">Lv.@{[$h->{level} // '—']}</span></div>
+              <div class="ah-body">
+                <p class="ah-name">@{[esc $ja]}<span class="ah-star">$stars</span></p>
+                <p class="ah-skill">スキル $skill</p>
+                <div class="ah-gear">$badges</div>
+              </div>
+            </div>
+HTML
+}
+
+# 競技場セクション全体（マーカー付き）
+sub render_arena {
+    my ($players) = @_;
+    my $now  = strftime('%Y/%m/%d %H:%M', localtime);
+    my $body = '';
+    for my $p (@$players) {
+        my $r  = $p->{row};
+        my $av = img_tag($r->{avatar_url});
+        my $rec = (defined $r->{score_label} && $r->{score_label} ne '') ? qq{<span class="ar-rec">戦績 @{[esc $r->{score_label}]}</span>} : '';
+        my $cards = $p->{heroes} && @{ $p->{heroes} }
+            ? join('', map { hero_card($_) } sort { ($a->{position} // 0) <=> ($b->{position} // 0) } @{ $p->{heroes} })
+            : qq{            <p class="wip">@{[ $p->{note} || '英雄情報がありません' ]}</p>\n};
+        $body .= <<"HTML";
+      <details class="acc ar-acc">
+        <summary><span class="ar-rk">@{[medal($r->{rank})]}</span>$av<span class="ar-name">@{[val($r->{nick_name})]}</span><span class="al-tag">@{[val($r->{alliance_abbr})]}</span><span class="ar-score">@{[fmt($r->{score})]}</span>$rec</summary>
+        <div class="acc-body">
+          <div class="ah-list">
+$cards          </div>
+        </div>
+      </details>
+HTML
+    }
+    $body = qq{      <p class="wip">競技場のデータを取得できませんでした。</p>\n} unless @$players;
+    return <<"HTML";
+    <!-- arena:start -->
+    <section class="card">
+      <h2>🏆 英雄装備-競技場</h2>
+      <p class="mini-note">競技場ランキング TOP10 の英雄5体と装備です。名前をタップで開閉できます。<br>
+         <span class="ag g-red"><b>+39</b><span class="ag-lv">Lv13</span></span> 赤装備（100を超えた強化値／精錬Lv）
+         <span class="ag g-gold"><b>+100</b><span class="ag-lv">Lv7</span></span> 神話装備（強化値／精錬Lv）<br>
+         ※英雄はAPIに登録されている5体で、競技場の防衛編成と並び順や顔ぶれが違う場合があります。<br>
+         データ取得：$now 時点（MightPulse API）</p>
+$body    </section>
+    <!-- arena:end -->
+HTML
+}
+
+# --arena-only：既存ページの競技場欄だけ差し替えて終了
+if ($arena_only) {
+    my $arena = render_arena(fetch_arena());
+    open(my $in, '<:encoding(UTF-8)', $out) or die "読めません: $out\n";
+    my $page = do { local $/; <$in> }; close $in;
+    $page =~ s/[ \t]*<!-- arena:start -->.*?<!-- arena:end -->\n?/$arena/s
+        or die "$out に <!-- arena:start --> 〜 <!-- arena:end --> がありません\n";
+    open(my $fh, '>:encoding(UTF-8)', $out) or die "書き込めません: $out\n";
+    print $fh $page; close $fh;
+    print "\n✅ 競技場欄を更新しました: $out\n";
+    exit 0;
+}
+
 # ---------- 最新データの取得 ----------
 print "王国情報を取得中（kid=$kid）...\n";
 my $k = api("/kingdoms/$kid")->{kingdom};
@@ -270,6 +387,7 @@ my $kname   = (defined $k->{name}  && $k->{name}  ne '') ? esc($k->{name})  : "$
 my $us_name = (defined $us->{name} && $us->{name} ne '') ? esc($us->{name}) : "${OUR_KID}サーバー";
 my $term_html = $term ? qq{<strong>対戦期間：$term</strong><br>} : '';
 my $latest_when = when($captured);
+my $arena_html  = render_arena(fetch_arena());
 
 # ---------- ページ全体 ----------
 my $html = <<"PAGE";
@@ -338,7 +456,8 @@ $ranks_html      <details class="acc">
 $base_html        </div>
       </details>
     </section>
-  </main>
+
+$arena_html  </main>
 
   <footer class="site-footer">
     <p class="paws">🐾 🐾 🐾</p>
