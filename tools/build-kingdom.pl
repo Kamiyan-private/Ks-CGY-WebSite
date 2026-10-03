@@ -187,7 +187,6 @@ HTML
 
 # ---------- 競技場（英雄装備） ----------
 my %SLOT_JA  = (Helmet => '兜', Gloves => '手袋', Armor => '鎧', Boots => '靴');
-my %TROOP    = (1 => ['infantry', '歩兵'], 2 => ['cavalry', '騎兵'], 3 => ['archer', '弓兵']);
 
 # 競技場ランキングTOP10と、各プレイヤーの英雄5体を取得
 sub fetch_arena {
@@ -226,8 +225,6 @@ sub hero_card {
     my $ja   = $HERO_JA{ $h->{name} // '' } // $h->{name} // '?';
     my $face = (-f "image/$ja.webp") ? "image/$ja.webp" : abs_url($h->{icon});
     my $gear = $h->{gear} || [];
-    my $tr   = @$gear ? $TROOP{ $gear->[0]{troop} // 0 } : undef;
-    my $troop = $tr ? qq{<img class="ah-troop" src="$FLAG_BASE/static/troop-types/$tr->[0].webp" alt="$tr->[1]" title="$tr->[1]" onerror="this.remove()">} : '';
     my $n     = $h->{stars} // 0;
     my $stars = $n <= 5 ? ('★' x $n) . ('☆' x (5 - $n)) : esc($h->{star_label});
     my $skill = join('', map { '<b>' . ($_->{level} // '—') . '</b>' } @{ $h->{skill_levels} || [] }) || '—';
@@ -237,7 +234,7 @@ sub hero_card {
     my $badges = join('', $ex, map { gear_badge($_) } sort { ($a->{sid} // 0) <=> ($b->{sid} // 0) } @$gear);
     return <<"HTML";
             <div class="ah">
-              <div class="ah-face"><img src="@{[esc $face]}" alt="@{[esc $ja]}" loading="lazy" onerror="this.remove()">$troop<span class="ah-lv">Lv.@{[$h->{level} // '—']}</span></div>
+              <div class="ah-face"><img src="@{[esc $face]}" alt="@{[esc $ja]}" loading="lazy" onerror="this.remove()"><span class="ah-lv">Lv.@{[$h->{level} // '—']}</span></div>
               <div class="ah-body">
                 <p class="ah-name">@{[esc $ja]}<span class="ah-star">$stars</span></p>
                 <p class="ah-skill">スキル $skill</p>
