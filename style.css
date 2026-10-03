@@ -900,6 +900,19 @@ tr:nth-child(even) td { background: #fffaf5; }
 }
 .step-list .step.goal .step-no { background: #e3a51c; }
 
+/* ---------- 対戦サーバー一覧の期間ラベル ---------- */
+.event-item h3 .when {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--sun);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
 /* ---------- 敵鯖ランキング表 ---------- */
 .rank-table { min-width: 380px; }
 .rank-table th { text-align: center; }

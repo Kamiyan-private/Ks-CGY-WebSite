@@ -1,0 +1,7 @@
+# APIキーなどの機密情報（誤コミット防止）
+*.key
+*_key
+.mightpulse_key
+secrets.json
+.env
+.env.*
