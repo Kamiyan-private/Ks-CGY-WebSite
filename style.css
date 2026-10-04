@@ -1208,6 +1208,8 @@ details.ar-acc > summary .mk { margin-right: 0; }
 }
 .ag b { font-size: 0.88rem; }
 .ag-slot { font-size: 0.62rem; opacity: 0.9; }
+.ag-ic { display: block; width: 28px; height: 28px; margin: 1px 0; object-fit: contain; }
+.ag.g-none .ag-ic { filter: grayscale(1); opacity: 0.55; }
 .ag-lv { font-weight: 700; }
 .ag.g-red  { background: linear-gradient(160deg, #f0707a, #c9343f); }
 .ag.g-gold { background: linear-gradient(160deg, #ffc65c, #e08a1e); }
@@ -1219,6 +1221,7 @@ details.ar-acc > summary .mk { margin-right: 0; }
   .ah { align-items: flex-start; }
   .ah-face { width: 60px; height: 60px; }
   .ag { min-width: 42px; }
+  .ag-ic { width: 24px; height: 24px; }
 }
 
 /* ---------- コピーボード（駐屯フェーズ） ---------- */

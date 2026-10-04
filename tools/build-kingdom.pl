@@ -48,6 +48,7 @@ my %HERO_JA = (
     'Perla'   => 'ペーラ',      'Marin'   => 'マリン',    'Jaeger'  => 'イェーガー',
     'Petra'   => 'ペーラ',      'Marlin'  => 'マリン',    # APIの実際の表記
     'Hilde'   => 'ヒルデ',      'Jabel'   => 'ジェベル',  'Saro'    => 'サロ',
+    'Saul'    => 'サロ',        # APIの実際の表記
     'Helga'   => 'ヘルガ',      'Howard'  => 'ハワード',  'Chenko'  => 'チェンコ',
 );
 
@@ -187,6 +188,17 @@ HTML
 
 # ---------- 競技場（英雄装備） ----------
 my %SLOT_JA  = (Helmet => '兜', Gloves => '手袋', Armor => '鎧', Boots => '靴');
+# 装備アイコン image/gear/<兵種>_<部位>.webp、専用装備は image/exclusive/<日本語名>.webp
+my %GEAR_TROOP = (1 => '歩兵', 2 => '騎兵', 3 => '弓兵');
+my %GEAR_PART  = (Helmet => '頭', Gloves => '腕', Armor => '胴', Boots => '足');
+
+# アイコン画像があればimgタグ、無ければ文字ラベル
+sub gear_icon {
+    my ($path, $label) = @_;
+    return -f $path
+        ? qq{<img class="ag-ic" src="@{[esc $path]}" alt="@{[esc $label]}" loading="lazy">}
+        : qq{<span class="ag-slot">@{[esc $label]}</span>};
+}
 
 # 競技場ランキングTOP10と、各プレイヤーの英雄5体を取得
 sub fetch_arena {
@@ -214,9 +226,12 @@ sub gear_badge {
     my $plus = $g->{red} ? $enh - 100 : $enh;
     $plus = 0 if $plus < 0;
     my $cls  = $g->{red} ? 'g-red' : 'g-gold';
-    my $slot = $SLOT_JA{ $g->{slot} // '' } // esc($g->{slot});
+    my $slot = $SLOT_JA{ $g->{slot} // '' } // $g->{slot} // '?';
     my $tip  = esc("$slot：" . ($g->{red} ? '赤装備' : '神話装備') . " 強化$enh／精錬Lv$rf");
-    return qq{<span class="ag $cls" title="$tip"><span class="ag-slot">$slot</span><b>+$plus</b><span class="ag-lv">Lv$rf</span></span>};
+    my $troop = $GEAR_TROOP{ $g->{troop} // 0 } // '';
+    my $part  = $GEAR_PART{ $g->{slot} // '' } // '';
+    my $icon  = gear_icon("image/gear/${troop}_$part.webp", $slot);
+    return qq{<span class="ag $cls" title="$tip">$icon<b>+$plus</b><span class="ag-lv">Lv$rf</span></span>};
 }
 
 # 英雄1体のカード
@@ -228,9 +243,10 @@ sub hero_card {
     my $n     = $h->{stars} // 0;
     my $stars = $n <= 5 ? ('★' x $n) . ('☆' x (5 - $n)) : esc($h->{star_label});
     my $skill = join('', map { '<b>' . ($_->{level} // '—') . '</b>' } @{ $h->{skill_levels} || [] }) || '—';
+    my $ex_ic = gear_icon("image/exclusive/$ja.webp", '専用');
     my $ex    = defined $h->{exclusive_gear_level}
-        ? qq{<span class="ag g-ex" title="専用装備 Lv$h->{exclusive_gear_level}"><span class="ag-slot">専用</span><b>+$h->{exclusive_gear_level}</b></span>}
-        : qq{<span class="ag g-none"><span class="ag-slot">専用</span><b>—</b></span>};
+        ? qq{<span class="ag g-ex" title="専用装備 Lv$h->{exclusive_gear_level}">$ex_ic<b>+$h->{exclusive_gear_level}</b></span>}
+        : qq{<span class="ag g-none" title="専用装備なし">$ex_ic<b>—</b></span>};
     my $badges = join('', $ex, map { gear_badge($_) } sort { ($a->{sid} // 0) <=> ($b->{sid} // 0) } @$gear);
     return <<"HTML";
             <div class="ah">
