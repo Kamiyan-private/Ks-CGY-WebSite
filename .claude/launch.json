@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "C:/Program Files/Git/usr/bin/perl.exe",
+      "runtimeArgs": ["tools/serve.pl", "8766"],
+      "port": 8766
+    }
+  ]
+}
