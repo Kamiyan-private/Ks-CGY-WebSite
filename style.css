@@ -661,6 +661,16 @@ tr:nth-child(even) td { background: #fffaf5; }
   border-bottom: 1px dashed var(--line);
 }
 .news-list li:last-child { border-bottom: none; }
+/* 5件を超えたらスクロール（高さは index.html のスクリプトで5件目に合わせる） */
+.news-list.is-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--peach-deep) transparent;
+}
+.news-list.is-scroll::-webkit-scrollbar { width: 6px; }
+.news-list.is-scroll::-webkit-scrollbar-thumb { background: var(--peach-deep); border-radius: 999px; }
 .news-date {
   flex: none;
   font-weight: 700;
@@ -679,6 +689,7 @@ tr:nth-child(even) td { background: #fffaf5; }
   color: var(--lav-deep);
   margin: 6px 0 12px;
 }
+.about-text { text-align: center; }
 .about-en {
   text-align: center;
   color: var(--ink-soft);

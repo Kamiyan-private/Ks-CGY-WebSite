@@ -57,6 +57,7 @@
     <section class="card">
       <h2>📢 同盟からのお知らせ</h2>
       <ul class="news-list">
+        <li><span class="news-date">2026/10/11</span> 4世代英雄の情報を追加！</li>
         <li><span class="news-date">2026/10/04</span> 最強王国ページ アップデート！</li>
         <li><span class="news-date">2026/09/12</span> チェーザレ討伐イベント更新！</li>
         <li><span class="news-date">2026/09/06</span> 最強王国ページを追加！</li>
@@ -64,15 +65,33 @@
         <li><span class="news-date">2026/07/31</span> 基本的な情報-集結主の編成についてのページを追加！</li>
         <li><span class="news-date">2026/07/27</span> CGY 攻略Wiki 公開～～～！</li>
       </ul>
+      <script>
+        // お知らせはちょうど5件分の高さにして、それ以降はスクロールにする
+        (function () {
+          var list = document.querySelector('.news-list');
+          var SHOW = 5;
+          function fit() {
+            var items = list.children;
+            list.style.maxHeight = '';
+            if (items.length <= SHOW) { list.classList.remove('is-scroll'); return; }
+            list.classList.add('is-scroll');
+            var h = items[SHOW - 1].getBoundingClientRect().bottom - list.getBoundingClientRect().top;
+            list.style.maxHeight = Math.ceil(h) + 'px';
+          }
+          fit();
+          window.addEventListener('load', fit);
+          window.addEventListener('resize', function () { requestAnimationFrame(fit); });
+        })();
+      </script>
     </section>
 
     <section class="card">
       <h2>🐾 CGY同盟について</h2>
       <p class="about-catch">「ふわふわ？いいえ、戦えます ٩(๑•̀ω•́๑)۶！」</p>
-      <p>見た目はふわふわ..中身はムキムキ！<br>
+      <p class="about-text">見た目はふわふわ..中身はムキムキ！<br>
          可愛いだけじゃ終わらないっ</p>
-      <p>愛と友情の <strong>もっふもっふパワー</strong>で勝利へ ٩(ˊᗜˋ*)و<br>
-         寝落ち・迷子・寄り道のキュゥ仲間募集中 z💤<br>
+      <p class="about-text">愛と友情の <strong>もっふもっふパワー</strong>で勝利へ ٩(ˊᗜˋ*)و<br>
+         寝落ち・迷子・寄り道のキュア仲間募集中 z💤<br>
          いつでもふわっと遊びに来てね ٩(ˊᗜˋ*)و</p>
       <p class="about-en">Cute but strong !<br>
          \ Fluffy friends are always welcome /</p>
