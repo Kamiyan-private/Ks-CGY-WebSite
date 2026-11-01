@@ -26,6 +26,7 @@ use Encode qw(decode);
 use File::Path qw(make_path);
 
 binmode(STDOUT, ':encoding(UTF-8)');
+binmode(STDERR, ':encoding(UTF-8)');
 
 my @args = @ARGV;
 my $reset      = grep { $_ eq '--reset-baseline' } @args;
@@ -33,6 +34,7 @@ my $arena_only = grep { $_ eq '--arena-only' } @args;
 @args = grep { $_ ne '--reset-baseline' && $_ ne '--arena-only' } @args;
 
 my $kid  = shift @args or die "kid を指定してください（例: 1909）\n";
+die "kid は数字で指定してください（例: 1909）\n" unless $kid =~ /^\d+$/;
 my $out  = shift @args or die "出力ファイルを指定してください\n";
 my $term = shift @args // '';
 $term = decode('UTF-8', $term) unless utf8::is_utf8($term);
@@ -62,7 +64,12 @@ my $BASELINE  = "data/kingdom-$kid-baseline.json";     # 初期版の保存先
 # ---------- 共通ユーティリティ ----------
 sub api {
     my ($path) = @_;
-    my $json = `curl -s --max-time 30 -H "Authorization: Bearer $key" "$API$path"`;
+    # シェルを通さずに curl を起動する（APIから受け取った値がコマンドとして解釈されないように）
+    open(my $fh, '-|', 'curl', '-s', '--max-time', '30',
+         '-H', "Authorization: Bearer $key", "$API$path")
+        or die "curl を起動できません: $!\n";
+    my $json = do { local $/; <$fh> };
+    close $fh;
     die "APIリクエスト失敗: $path\n" unless $json;
     my $d = eval { decode_json($json) };
     die "JSONの解析に失敗: $path\n" unless $d;
@@ -83,6 +90,9 @@ sub esc {
     return $s;
 }
 sub val    { my ($s) = @_; return (defined $s && $s ne '') ? esc($s) : '—'; }
+# APIの数値項目は、数字のときだけそのまま出す（それ以外は「—」／計算用は 0）
+sub num    { my ($n) = @_; return (defined $n && $n =~ /^-?\d+$/) ? $n : '—'; }
+sub num0   { my ($n) = @_; return (defined $n && $n =~ /^-?\d+$/) ? $n : 0; }
 
 # APIは絶対URL（CDN）と相対パス（/assets/...）の両方を返すので、相対ならドメインを補う
 sub abs_url {
@@ -110,8 +120,8 @@ sub hero_cell {
     my $img = (-f "image/$ja.webp") ? img_tag("image/$ja.webp") : img_tag($r->{hero_icon});
     return $img . esc($ja);
 }
-sub medal  { my $r = shift; return $r == 1 ? '🥇' : $r == 2 ? '🥈' : $r == 3 ? '🥉' : $r; }
-sub toprow { my $r = shift; return $r <= 3 ? qq{ class="top$r"} : ''; }
+sub medal  { my $r = num0(shift); return $r == 1 ? '🥇' : $r == 2 ? '🥈' : $r == 3 ? '🥉' : $r; }
+sub toprow { my $r = num0(shift); return ($r >= 1 && $r <= 3) ? qq{ class="top$r"} : ''; }
 sub when   { my $t = shift; return $t ? strftime('%Y/%m/%d %H:%M', localtime(int($t))) : '—'; }
 
 # ---------- 取得する部門 ----------
@@ -134,7 +144,7 @@ sub render_board {
             $body .= sprintf(
                 qq{%s        <tr%s><td class="rk">%s</td><td class="num">%s</td><td class="who">%s<span class="al-tag">%s</span></td><td class="who name-cell">%s</td><td class="who name-cell">%s</td><td class="num">%s</td></tr>\n},
                 $pad, toprow($r->{rank}), medal($r->{rank}), fmt($r->{score}),
-                $img, val($r->{abbr}), val($r->{name}), val($r->{leader_name}), $r->{member_count} // '—'
+                $img, val($r->{abbr}), val($r->{name}), val($r->{leader_name}), num($r->{member_count})
             );
         }
         return <<"HTML";
@@ -207,10 +217,16 @@ sub fetch_arena {
     print "競技場ランキングを取得中...\n";
     my $board = api("/kingdoms/$kid/ranks?board=coliseum&limit=10")->{boards}[0];
     my @rows = @{ $board->{rows} || [] };
+    # プレイヤーIDが数字でなければ問い合わせない（URLに想定外の文字を入れないため）
+    my $fetch = sub {
+        my $id = shift;
+        return undef unless defined $id && $id =~ /^\d+$/;
+        return eval { api("/players/$id?include=heroes") };
+    };
     my %res;
     for my $r (@rows) {
         print "  英雄情報を取得中: $r->{nick_name}...\n";
-        $res{$r->{governor_id}} = eval { api("/players/$r->{governor_id}?include=heroes") };
+        $res{$r->{governor_id}} = $fetch->($r->{governor_id});
     }
     # API側にキャッシュが無いプレイヤーは初回が30秒を超えて失敗しやすい。
     # 1回目のリクエストでキャッシュは作られるので、失敗した分だけ取り直す
@@ -219,7 +235,7 @@ sub fetch_arena {
         last unless @ng;
         print "  取得できなかった ", scalar(@ng), " 人を再取得します（$try 回目）...\n";
         sleep 5;
-        $res{$_->{governor_id}} = eval { api("/players/$_->{governor_id}?include=heroes") } for @ng;
+        $res{$_->{governor_id}} = $fetch->($_->{governor_id}) for @ng;
     }
     my @players;
     for my $r (@rows) {
@@ -237,8 +253,8 @@ sub fetch_arena {
 # 装備1部位のバッジ。赤装備は100を超えた分を「+」で出す（ゲーム内の表示と同じ）
 sub gear_badge {
     my ($g) = @_;
-    my $enh  = $g->{enhancement_level} // 0;
-    my $rf   = $g->{refine_level} // 0;
+    my $enh  = num0($g->{enhancement_level});
+    my $rf   = num0($g->{refine_level});
     my $plus = $g->{red} ? $enh - 100 : $enh;
     $plus = 0 if $plus < 0;
     my $cls  = $g->{red} ? 'g-red' : 'g-gold';
@@ -258,15 +274,16 @@ sub hero_card {
     my $gear = $h->{gear} || [];
     my $n     = $h->{stars} // 0;
     my $stars = $n <= 5 ? ('★' x $n) . ('☆' x (5 - $n)) : esc($h->{star_label});
-    my $skill = join('', map { '<b>' . ($_->{level} // '—') . '</b>' } @{ $h->{skill_levels} || [] }) || '—';
+    my $skill = join('', map { '<b>' . num($_->{level}) . '</b>' } @{ $h->{skill_levels} || [] }) || '—';
     my $ex_ic = gear_icon("image/exclusive/$ja.webp", '専用');
+    my $exlv  = num($h->{exclusive_gear_level});
     my $ex    = defined $h->{exclusive_gear_level}
-        ? qq{<span class="ag g-ex" title="専用装備 Lv$h->{exclusive_gear_level}">$ex_ic<b>+$h->{exclusive_gear_level}</b></span>}
+        ? qq{<span class="ag g-ex" title="専用装備 Lv$exlv">$ex_ic<b>+$exlv</b></span>}
         : qq{<span class="ag g-none" title="専用装備なし">$ex_ic<b>—</b></span>};
     my $badges = join('', $ex, map { gear_badge($_) } sort { ($a->{sid} // 0) <=> ($b->{sid} // 0) } @$gear);
     return <<"HTML";
             <div class="ah">
-              <div class="ah-face"><img src="@{[esc $face]}" alt="@{[esc $ja]}" loading="lazy" onerror="this.remove()"><span class="ah-lv">Lv.@{[$h->{level} // '—']}</span></div>
+              <div class="ah-face"><img src="@{[esc $face]}" alt="@{[esc $ja]}" loading="lazy" onerror="this.remove()"><span class="ah-lv">Lv.@{[num($h->{level})]}</span></div>
               <div class="ah-body">
                 <p class="ah-name">@{[esc $ja]}<span class="ah-star">$stars</span></p>
                 <p class="ah-skill">スキル $skill</p>
@@ -414,7 +431,7 @@ for my $r (@rows) {
 # API側で名前が未登録（null）の場合は「○○サーバー」で代替する
 my $kname   = (defined $k->{name}  && $k->{name}  ne '') ? esc($k->{name})  : "${kid}サーバー";
 my $us_name = (defined $us->{name} && $us->{name} ne '') ? esc($us->{name}) : "${OUR_KID}サーバー";
-my $term_html = $term ? qq{<strong>対戦期間：$term</strong><br>} : '';
+my $term_html = $term ? qq{<strong>対戦期間：@{[esc $term]}</strong><br>} : '';
 my $latest_when = when($captured);
 my $arena_html  = render_arena(fetch_arena());
 
