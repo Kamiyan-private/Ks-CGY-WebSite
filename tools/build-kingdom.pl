@@ -50,6 +50,8 @@ my %HERO_JA = (
     'Hilde'   => 'ヒルデ',      'Jabel'   => 'ジェベル',  'Saro'    => 'サロ',
     'Saul'    => 'サロ',        # APIの実際の表記
     'Helga'   => 'ヘルガ',      'Howard'  => 'ハワード',  'Chenko'  => 'チェンコ',
+    'Alcar'   => 'アルカ',      # 4世代（APIの実際の表記）
+    'Margo'   => 'マーゴ',      'Rosa'    => 'ローザ',    # 4世代（APIの表記は未確認）
 );
 
 my $API       = 'https://api.mightpulse.com/v1';
@@ -204,10 +206,24 @@ sub gear_icon {
 sub fetch_arena {
     print "競技場ランキングを取得中...\n";
     my $board = api("/kingdoms/$kid/ranks?board=coliseum&limit=10")->{boards}[0];
-    my @players;
-    for my $r (@{ $board->{rows} || [] }) {
+    my @rows = @{ $board->{rows} || [] };
+    my %res;
+    for my $r (@rows) {
         print "  英雄情報を取得中: $r->{nick_name}...\n";
-        my $p = eval { api("/players/$r->{governor_id}?include=heroes") };
+        $res{$r->{governor_id}} = eval { api("/players/$r->{governor_id}?include=heroes") };
+    }
+    # API側にキャッシュが無いプレイヤーは初回が30秒を超えて失敗しやすい。
+    # 1回目のリクエストでキャッシュは作られるので、失敗した分だけ取り直す
+    for my $try (1 .. 2) {
+        my @ng = grep { !$res{$_->{governor_id}} } @rows;
+        last unless @ng;
+        print "  取得できなかった ", scalar(@ng), " 人を再取得します（$try 回目）...\n";
+        sleep 5;
+        $res{$_->{governor_id}} = eval { api("/players/$_->{governor_id}?include=heroes") } for @ng;
+    }
+    my @players;
+    for my $r (@rows) {
+        my $p = $res{$r->{governor_id}};
         my $h = $p ? $p->{heroes} : undef;
         push @players, {
             row    => $r,
