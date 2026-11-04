@@ -53,7 +53,7 @@ my %HERO_JA = (
     'Saul'    => 'サロ',        # APIの実際の表記
     'Helga'   => 'ヘルガ',      'Howard'  => 'ハワード',  'Chenko'  => 'チェンコ',
     'Alcar'   => 'アルカ',      # 4世代（APIの実際の表記）
-    'Margo'   => 'マーゴ',      'Rosa'    => 'ローザ',    # 4世代（APIの表記は未確認）
+    'Margot'  => 'マーゴ',      'Rosa'    => 'ローザ',    # 4世代（APIの実際の表記）
 );
 
 my $API       = 'https://api.mightpulse.com/v1';
