@@ -1378,3 +1378,29 @@ details.ar-acc > summary .mk { margin-right: 0; }
   .card { padding: 18px 16px; }
   main { padding: 8px 14px 50px; }
 }
+
+/* ---------- 王国移民ページの一覧表 ---------- */
+.transfer-table { min-width: 640px; }
+.transfer-table th, .transfer-table td { white-space: nowrap; }
+.transfer-table th:first-child,
+.transfer-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+.transfer-table td:first-child { background: var(--card-bg); font-weight: 800; }
+.transfer-table tr:nth-child(even) td:first-child { background: #fffaf5; }
+.transfer-table tr.us td,
+.transfer-table tr.us td:first-child { background: var(--cream); font-weight: 800; }
+.transfer-table td.better { background: #e9f8f1; }
+.better-chip {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  border-radius: 3px;
+  background: #e9f8f1;
+  border: 1px solid var(--mint);
+  vertical-align: -1px;
+}
+.band-table { min-width: 0; }
