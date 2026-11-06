@@ -324,7 +324,7 @@ HTML
          <span class="ag g-red"><b>+39</b><span class="ag-lv">Lv13</span></span> 赤装備（100を超えた強化値／精錬Lv）
          <span class="ag g-gold"><b>+100</b><span class="ag-lv">Lv7</span></span> 神話装備（強化値／精錬Lv）<br>
          ※英雄はAPIに登録されている5体で、競技場の防衛編成と並び順や顔ぶれが違う場合があります。<br>
-         データ取得：$now 時点（MightPulse API）</p>
+         更新日時：$now 時点（MightPulse API）</p>
 $body    </section>
     <!-- arena:end -->
 HTML
@@ -337,6 +337,9 @@ if ($arena_only) {
     my $page = do { local $/; <$in> }; close $in;
     $page =~ s/[ \t]*<!-- arena:start -->.*?<!-- arena:end -->\n?/$arena/s
         or die "$out に <!-- arena:start --> 〜 <!-- arena:end --> がありません\n";
+    # サーバー概要の更新日時も、ページを更新した時刻にそろえる
+    my $now = strftime('%Y/%m/%d %H:%M', localtime);
+    $page =~ s/(優勢です。)(?:データ取得|更新日時)：\S+ \S+ 時点/$1更新日時：$now 時点/;
     open(my $fh, '>:encoding(UTF-8)', $out) or die "書き込めません: $out\n";
     print $fh $page; close $fh;
     print "\n✅ 競技場欄を更新しました: $out\n";
@@ -434,6 +437,7 @@ my $us_name = (defined $us->{name} && $us->{name} ne '') ? esc($us->{name}) : "$
 my $term_html = $term ? qq{<strong>対戦期間：@{[esc $term]}</strong><br>} : '';
 my $latest_when = when($captured);
 my $arena_html  = render_arena(fetch_arena());
+my $page_when   = strftime('%Y/%m/%d %H:%M', localtime);   # ページを更新した時刻
 
 # ---------- ページ全体 ----------
 my $html = <<"PAGE";
@@ -487,7 +491,7 @@ my $html = <<"PAGE";
 $stats_html          </tbody>
         </table>
       </div>
-      <p class="mini-note">※ 色が付いている方が優勢です。データ取得：$latest_when 時点（MightPulse API）</p>
+      <p class="mini-note">※ 色が付いている方が優勢です。更新日時：$page_when 時点（MightPulse API）</p>
     </section>
 
     <section class="cat">
